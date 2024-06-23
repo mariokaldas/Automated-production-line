@@ -1,0 +1,59 @@
+10:56:37 **** Incremental Build of configuration Debug for project MCT_project ****
+make all 
+Building file: ../APP/APP.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega32 -DF_CPU=16000000UL -MMD -MP -MF"APP/APP.d" -MT"APP/APP.o" -c -o "APP/APP.o" "../APP/APP.c"
+In file included from ../APP/APP.c:20:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+../APP/APP.c: In function 'APP_wait':
+../APP/APP.c:117: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:118: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c: In function 'APP_assembly':
+../APP/APP.c:177: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:178: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:186: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:253: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:296: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:364: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:174: warning: unused variable 'i'
+../APP/APP.c: In function 'APP_store':
+../APP/APP.c:409: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+../APP/APP.c:410: warning: pointer targets in passing argument 1 of 'LCD_displayStringRowColumn' differ in signedness
+Finished building: ../APP/APP.c
+ 
+Building file: ../APP/main.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega32 -DF_CPU=16000000UL -MMD -MP -MF"APP/main.d" -MT"APP/main.o" -c -o "APP/main.o" "../APP/main.c"
+Finished building: ../APP/main.c
+ 
+Building target: MCT_project.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,MCT_project.map -mmcu=atmega32 -o "MCT_project.elf"  ./APP/HAL/MCAL_ATMEGA32/gpio.o ./APP/HAL/MCAL_ATMEGA32/timer1.o  ./APP/HAL/IR.o ./APP/HAL/LCD.o ./APP/HAL/limitSwitch.o ./APP/HAL/servo.o ./APP/HAL/stepperMotor.o  ./APP/APP.o ./APP/main.o   
+Finished building target: MCT_project.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S MCT_project.elf  >"MCT_project.lss"
+Finished building: MCT_project.lss
+ 
+Create Flash image (ihex format)
+avr-objcopy -R .eeprom -R .fuse -R .lock -R .signature -O ihex MCT_project.elf  "MCT_project.hex"
+Finished building: MCT_project.hex
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega32 MCT_project.elf
+AVR Memory Usage
+----------------
+Device: atmega32
+
+Program:   19596 bytes (59.8% Full)
+(.text + .data + .bootloader)
+
+Data:        444 bytes (21.7% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+
+10:56:38 Build Finished. 0 errors, 12 warnings. (took 554ms)
+

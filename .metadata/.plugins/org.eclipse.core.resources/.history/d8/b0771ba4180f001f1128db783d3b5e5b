@@ -1,0 +1,274 @@
+/*
+ * APP.c
+ *
+ *  Created on: Apr 18, 2024
+ *      Author: mario
+ */
+
+
+/****************************************************************************************
+ *                     						Includes
+ * ***************************************************************************************/
+
+#include"APP.h"
+#include"HAL/limitSwitch.h"
+#include"HAL/servo.h"
+#include"HAL/stepperMotor.h"
+#include"HAL/IR.h"
+#include"HAL/LCD.h"
+
+#include<util/delay.h>
+
+
+/****************************************************************************************
+ *                     					Types declaration
+ * ***************************************************************************************/
+
+
+
+/****************************************************************************************
+ *                  				   Global variables
+ * ***************************************************************************************/
+
+enum states currentState;
+
+enum products currentProduct;
+
+static uint32 currentXsteps=0;
+static uint32 currentYsteps=0;
+static uint32 currentZsteps=0;
+
+union storePositions_flags store_flag;
+union assemblyPositions_flags assembly_flag;
+
+/* This position will only contain green assembled product */
+struct position store1_Green={XPOS1,YPOS1};
+
+/* This position will only contain green assembled product */
+struct position store2_Green={XPOS2,YPOS1};
+
+/* This position will only contain BLUE assembled product */
+struct position store3_BLUE={XPOS1,YPOS2};
+
+/* This position will only contain BLUE assembled product */
+struct position store4_BLUE={XPOS2,YPOS2};
+
+/* This position will only contain green base */
+struct position assembly1_GreenBase={XPOS1,YPOS3};
+
+/* This position will only contain green LID */
+struct position assembly2_GreenLID={XPOS2,YPOS3};
+
+/* This position will only contain green LID */
+struct position assembly3_GreenLID={XPOS3,YPOS3};
+
+/* This position will only contain BLUE base */
+struct position assembly4_BLUEBase={XPOS1,YPOS4};
+
+/* This position will only contain BLUE LID */
+struct position assembly5_BLUELID={XPOS2,YPOS4};
+
+/* This position will only contain BLUE LID */
+struct position assembly6_BLUELID={XPOS3,YPOS4};
+
+
+/****************************************************************************************
+ *                     				 Functions prototype
+ * ***************************************************************************************/
+
+void home();
+void moveToPosition(struct position pos);
+void pickUp(void);
+void release(void);
+
+/****************************************************************************************
+ *                     				 Functions definitions
+ * ***************************************************************************************/
+
+void APP_init(void){
+
+	LS_init(LS_XHOME);
+	LS_init(LS_YHOME);
+	LS_init(LS_ZHOME);
+	LS_init(LS_ZHOME);
+
+	IR_init(IR_GRIPPER);
+
+	/* The following two lines are NOT sensors go to IR.h for more explanation */
+	IR_init(IR_BASE);
+	IR_init(IR_LID);
+
+	SERVO_init();
+
+	STEPPERMOTOR_init(STEPPERX);
+	STEPPERMOTOR_init(STEPPERY);
+	STEPPERMOTOR_init(STEPPERZ);
+
+	LCD_init();
+
+	currentState = WAIT;
+
+	while(GPIO_readPin(PORTD_ID,2) == 1);
+
+}
+
+
+void APP_wait(){
+
+	LCD_clearScreen();
+	LCD_displayStringRowColumn("WAITING",1,1);
+	LCD_displayStringRowColumn("state",2,1);
+
+	home();
+	STEPPERMOTOR_steps(STEPPERX,XOBJECT,STEPPER_CCW);
+	STEPPERMOTOR_steps(STEPPERY,YOBJECT,STEPPER_CCW);
+	currentXsteps = XOBJECT;
+	currentYsteps = YOBJECT;
+
+
+//	while(!(IR_getReading(IR_BASE) || IR_getReading(IR_LID) || IR_getReading(IR_COLOR)));
+//
+//	while(1){
+//
+//		if(IR_getReading(IR_BASE) && IR_getReading(IR_LID) && !(IR_getReading(IR_COLOR))){
+//
+//			currentProduct = GREEN_BASE;
+//			break;
+//		}
+//		else if(IR_getReading(IR_BASE) && !(IR_getReading(IR_LID)) && IR_getReading(IR_COLOR)){
+//
+//			currentProduct = GREEN_LID;
+//			break;
+//		}
+//		else if(!(IR_getReading(IR_BASE)) && IR_getReading(IR_LID) && IR_getReading(IR_COLOR)){
+//
+//			currentProduct = BLUE_BASE;
+//			break;
+//		}
+//		else if(IR_getReading(IR_BASE) && IR_getReading(IR_LID) && IR_getReading(IR_COLOR)){
+//
+//			currentProduct = BLUE_LID;
+//			break;
+//		}
+//	}
+
+	/*
+	 * This is confirmation pin, it will be used for sending confirmation for MCU which sent
+	 * previous signals to remove those signals for a new product
+	 *  */
+	GPIO_writePin(PORTC_ID,CONFIRMATION,HIGH);
+	_delay_ms(1000);
+	GPIO_writePin(PORTC_ID,CONFIRMATION,LOW);
+
+	currentState = ASSEMBLY;
+
+	while(GPIO_readPin(PORTD_ID,3) == 1);
+
+
+}
+
+void APP_assembly(){
+
+	uint8 i;
+
+	LCD_clearScreen();
+	LCD_displayStringRowColumn("ASSEMBLY",1,1);
+	LCD_displayStringRowColumn("state",2,1);
+
+	pickUp(ZPOS_CONVEYER);
+
+	switch(currentProduct){
+
+	case GREEN_BASE:
+
+
+
+
+
+		break;
+
+	case GREEN_LID:
+
+
+
+		break;
+
+	case BLUE_BASE:
+		break;
+
+	case BLUE_LID:
+		break;
+
+
+	}
+
+	while(GPIO_readPin(PORTD_ID,4) == 1);
+
+}
+
+void APP_store(){
+
+	LCD_clearScreen();
+	LCD_displayStringRowColumn("STORE",1,1);
+	LCD_displayStringRowColumn("state",2,1);
+
+
+
+}
+
+void home(){
+
+	STEPPERMOTOR_moveTillLS(STEPPERZ,STEPPER_CCW,LS_ZHOME);
+	STEPPERMOTOR_moveTillLS(STEPPERX,STEPPER_CW,LS_XHOME);
+	STEPPERMOTOR_moveTillLS(STEPPERY,STEPPER_CW,LS_YHOME);
+
+}
+
+void moveToPosition(struct position pos){
+
+	if(pos.x > currentXsteps){
+
+		STEPPERMOTOR_steps(STEPPERX,(pos.x - currentXsteps),STEPPER_CCW);
+		currentXsteps = pos.x;
+	}
+	else if(pos.x < currentXsteps){
+		STEPPERMOTOR_steps(STEPPERX,(pos.x - currentXsteps),STEPPER_CW);
+		currentXsteps = pos.x;
+	}
+
+	if(pos.y > currentYsteps){
+
+		STEPPERMOTOR_steps(STEPPERY,(pos.y - currentYsteps),STEPPER_CCW);
+		currentYsteps = pos.y;
+	}
+	else if(pos.y < currentYsteps){
+		STEPPERMOTOR_steps(STEPPERY,(pos.y - currentYsteps),STEPPER_CW);
+		currentYsteps = pos.y;
+	}
+
+	if(pos.y > currentYsteps){
+
+		STEPPERMOTOR_steps(STEPPERY,(pos.y - currentYsteps),STEPPER_CCW);
+		currentYsteps = pos.y;
+	}
+	else if(pos.y < currentYsteps){
+		STEPPERMOTOR_steps(STEPPERY,(pos.y - currentYsteps),STEPPER_CW);
+		currentYsteps = pos.y;
+	}
+}
+
+void pickUp(enum positons_steps posOfZ){
+
+	STEPPERMOTOR_steps(STEPPERZ,posOfZ,STEPPER_CW);
+	SERVO_angle(SERVO_GRIPPER,SERVO_GRIPPER_CLOSE);
+	STEPPERMOTOR_moveTillLS(STEPPERZ,STEPPER_CCW,LS_ZHOME);
+}
+
+void release(enum positons_steps posOfZ){
+
+	STEPPERMOTOR_steps(STEPPERZ,posOfZ,STEPPER_CW);
+	SERVO_angle(SERVO_GRIPPER,SERVO_GRIPPER_OPEN);
+	STEPPERMOTOR_moveTillLS(STEPPERZ,STEPPER_CCW,LS_ZHOME);
+}
+
+

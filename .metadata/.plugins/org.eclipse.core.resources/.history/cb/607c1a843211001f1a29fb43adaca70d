@@ -1,0 +1,38 @@
+/*
+ * main.c
+ *
+ *  Created on: Apr 18, 2024
+ *      Author: mario
+ */
+
+
+#include"APP.h"
+
+
+
+int main(void){
+
+	APP_init();
+
+	while (TRUE){
+
+		switch(currentState){
+
+		case WAIT:
+
+			APP_wait();
+			break;
+
+		case ASSEMBLY:
+
+			APP_assembly();
+			break;
+
+		case STORE:
+
+			APP_store();
+			break;
+
+		}
+	}
+}

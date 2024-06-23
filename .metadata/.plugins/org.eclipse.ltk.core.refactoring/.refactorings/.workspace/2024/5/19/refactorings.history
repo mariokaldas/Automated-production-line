@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete 2 resources" deleteContents="false" description="Delete 2 resources" element1="/MCT_project/APP/HAL/DCmotor.c" element2="/MCT_project/APP/HAL/DCmotor.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1715210658554"/>&#x0A;&#x0A;<refactoring comment="Delete 2 resources" deleteContents="false" description="Delete 2 resources" element1="/MCT_project/APP/HAL/stepper_Hbridge.c" element2="/MCT_project/APP/HAL/stepper_Hbridge.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1715269458577"/>
+</session>

@@ -1,0 +1,107 @@
+/*
+ * APP.h
+ *
+ *  Created on: Apr 18, 2024
+ *      Author: mario
+ */
+
+#ifndef APP_APP_H_
+#define APP_APP_H_
+
+
+/****************************************************************************************
+ *                     						Includes
+ * ***************************************************************************************/
+
+#include "HAL/MCAL_ATMEGA32/std_types.h"
+
+/****************************************************************************************
+ *                     					Global variables
+ * ***************************************************************************************/
+
+extern enum states currentState;/* will be used in main */
+
+/****************************************************************************************
+ *                     					Types declaration
+ * ***************************************************************************************/
+
+enum states{
+
+	WAIT,ASSEMBLY,STORE
+};
+
+enum products{
+
+	GREEN_BASE, GREEN_LID, BLUE_BASE, BLUE_LID
+};
+
+/* These flags indicates if this store position is occupied or not (instead of IR sensors) */
+union storePositions_flags{
+
+	/* this variable used to access flags as a bulk to loop over them */
+	uint8 store;
+
+	struct {
+
+		uint8 store1_Green:1;
+		uint8 store2_Green:1;
+		uint8 store3_blue:1;
+		uint8 store4_blue:1;
+		uint8 greenProduct_assembled1:1;
+		uint8 greenProduct_assembled2:1;
+		uint8 blueProduct_assembled1:1;
+		uint8 blueProduct_assembled2:1;
+
+	}store_flags;
+};
+
+/* These flags indicates if this assembly position is occupied or not (instead of IR sensors) */
+union assemblyPositions_flags{
+
+	/* this variable used to access flags as a bulk to loop over them */
+	uint8 assembly;
+
+	struct{
+
+		uint8 assembly1_GreenBase:1;
+		uint8 assembly2_Green:2;
+		uint8 assembly3_GreenLID:1;
+		uint8 assembly4_blueBase:1;
+		uint8 assembly5_blue:2;
+		uint8 assembly6_blueLID:1;
+
+	}assembly_flags;
+};
+/* This structure contain the co-ordination of every position */
+struct position{
+
+	uint32 x;
+	uint32 y;
+};
+
+/* mapping for every position steps in project whether its assembly or store */
+enum positons_steps{
+
+	XPOS1=115000,XPOS2=160000,XPOS3=205000,
+	YPOS1=6000,YPOS2=30000,YPOS3=59000,YPOS4=84000,
+	ZPOS_CONVEYER=18000,ZPOS_LOW=45000,ZPOS_BASEHEIGHT=30000
+};
+
+
+/* object on conveyer position steps  */
+enum objectPosition{
+
+	XOBJECT=30000,YOBJECT=21000 /* Object position on the conveyer */
+};
+
+
+/****************************************************************************************
+ *                     					Functions prototype
+ * ***************************************************************************************/
+
+void APP_init(void);
+void APP_wait(void);
+void APP_assembly(void);
+void APP_store(void);
+
+#endif /* APP_APP_H_ */

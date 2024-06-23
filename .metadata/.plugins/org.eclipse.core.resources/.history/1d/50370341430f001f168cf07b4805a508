@@ -1,0 +1,45 @@
+/*
+ * main.c
+ *
+ *  Created on: Apr 18, 2024
+ *      Author: mario
+ */
+
+
+#include"APP.h"
+#include<util/delay.h>
+
+
+int main(void){
+
+
+
+	pickUp(ZPOS_CONVEYER);
+	_delay_ms(1000);
+	release(ZPOS_CONVEYER);
+	_delay_ms(1000);
+
+//	APP_init();
+//
+//	while (TRUE){
+//
+//		switch(currentState){
+//
+//		case WAIT:
+//
+//			APP_wait();
+//			break;
+//
+//		case ASSEMBLY:
+//
+//			APP_assembly();
+//			break;
+//
+//		case STORE:
+//
+//			APP_store();
+//			break;
+//
+//		}
+//	}
+}
